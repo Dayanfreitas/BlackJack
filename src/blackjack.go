@@ -78,6 +78,6 @@ func Hello() {
 
 }
 
-func PaymentOdds(odds float64, bet float64) float64 {
-	return bet * odds
+func (d *Dealer) PaymentOdds(bet float64) float64 {
+	return bet * d.odds
 }
