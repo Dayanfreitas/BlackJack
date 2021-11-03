@@ -86,21 +86,25 @@ func (d *Dealer) PaymentOdds(bet float64) float64 {
 }
 
 type OptionsBlackJack struct {
+	Odds       float64
+	DeckNumber int
 }
 
-func New(Odds float64, param ...interface{}) *BlackJack {
+func New(op OptionsBlackJack) *BlackJack {
 	// Contrui black jack
+	oddsDefault := float64(3.0 / 2.0)
 	black_jack := &BlackJack{}
+	black_jack.Odds = oddsDefault
 
-	black_jack.Dealer = Dealer{odds: Odds}
+	if op.Odds != oddsDefault && op.Odds > 0 {
+		black_jack.Odds = op.Odds
+	}
+
+	black_jack.Dealer = Dealer{odds: black_jack.Odds}
+
 	black_jack.DeckNumber = 1
-
-	if len(param) > 0 {
-		// fmt.Print()
-		// fmt.Printf("DeckNumber %T\n", param[0])
-		// fmt.Print()
-
-		black_jack.DeckNumber = param[0].(int)
+	if op.DeckNumber != 0 {
+		black_jack.DeckNumber = op.DeckNumber
 	}
 
 	return black_jack
