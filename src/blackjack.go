@@ -22,7 +22,10 @@ type Dealer struct {
 
 type BlackJack struct {
 	// numberPlayers int
-	Cards []deck.Card
+	DeckNumber int
+	Odds       float64
+	Cards      []deck.Card
+	Dealer     Dealer
 }
 
 func Hello() {
@@ -81,3 +84,36 @@ func Hello() {
 func (d *Dealer) PaymentOdds(bet float64) float64 {
 	return bet * d.odds
 }
+
+type OptionsBlackJack struct {
+}
+
+func New(Odds float64, param ...interface{}) *BlackJack {
+	// Contrui black jack
+	black_jack := &BlackJack{}
+
+	black_jack.Dealer = Dealer{odds: Odds}
+	black_jack.DeckNumber = 1
+
+	if len(param) > 0 {
+		// fmt.Print()
+		// fmt.Printf("DeckNumber %T\n", param[0])
+		// fmt.Print()
+
+		black_jack.DeckNumber = param[0].(int)
+	}
+
+	return black_jack
+}
+
+//REFERENCIA
+// type Person struct {
+// 	firstName string
+// 	lastName  string
+// }
+// func printIfPerson(object interface{}) {
+// 	person, ok := object.(Person)
+// 	if ok {
+// 		fmt.Printf("Hello %s!\n", person.firstName)
+// 	}
+// }
