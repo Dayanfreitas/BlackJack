@@ -6,6 +6,11 @@ import (
 	"github.com/adamclerk/deck"
 )
 
+const (
+	OddsDefault       = float64(3.0 / 2.0)
+	DeckNumberDefault = 1
+)
+
 type Hand struct {
 }
 
@@ -90,24 +95,26 @@ type OptionsBlackJack struct {
 	DeckNumber int
 }
 
-func New(op OptionsBlackJack) *BlackJack {
-	// Contrui black jack
-	oddsDefault := float64(3.0 / 2.0)
-	black_jack := &BlackJack{}
-	black_jack.Odds = oddsDefault
-
-	if op.Odds != oddsDefault && op.Odds > 0 {
-		black_jack.Odds = op.Odds
+func New(optionsBlackJack OptionsBlackJack) *BlackJack {
+	options := OptionsBlackJack{
+		Odds:       OddsDefault,
+		DeckNumber: DeckNumberDefault,
 	}
 
-	black_jack.Dealer = Dealer{odds: black_jack.Odds}
-
-	black_jack.DeckNumber = 1
-	if op.DeckNumber != 0 {
-		black_jack.DeckNumber = op.DeckNumber
+	if optionsBlackJack.DeckNumber > 1 {
+		options.DeckNumber = optionsBlackJack.DeckNumber
 	}
 
-	return black_jack
+	if optionsBlackJack.Odds != options.Odds && optionsBlackJack.Odds > 0 {
+		options.Odds = optionsBlackJack.Odds
+	}
+
+	black_jack := BlackJack{
+		DeckNumber: options.DeckNumber,
+		Odds:       options.Odds,
+		Dealer:     Dealer{odds: options.Odds},
+	}
+	return &black_jack
 }
 
 //REFERENCIA
