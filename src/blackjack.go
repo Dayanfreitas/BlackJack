@@ -9,7 +9,12 @@ import (
 const (
 	OddsDefault       = float64(3.0 / 2.0)
 	DeckNumberDefault = 1
+	DealerCanHit      = 16
+	BlackJackPoints   = 21
 )
+
+// const pointCartOfBalck
+// card values ​​in black ja
 
 type Player struct {
 	Id   int
@@ -123,11 +128,54 @@ func New(optionsBlackJack OptionsBlackJack) *BlackJack {
 }
 
 func (d *Dealer) CanHit() bool {
-	if d.Point <= 16 {
+	if d.Point <= DealerCanHit {
 		return true
 	}
 
 	return false
+}
+
+func (d *Dealer) BlackjackCheck(hand []deck.Card) bool {
+	// pointMap := make(map[int]int)
+
+	point := 0
+	for _, v := range hand {
+		// fmt.Printf("=> %d\n", pointMap[string(v.Face())])
+
+		if v.Face() == 0 {
+			point += 11
+		}
+
+		if v.Face() >= 10 {
+			point += 10
+		}
+		// fmt.Println(v.Face())
+		// fmt.Println(v.Face())
+	}
+
+	return (point == BlackJackPoints)
+}
+
+func (d *Dealer) IsHandBurst(hand *[]deck.Card) bool {
+	return GetHandPoint(hand) > BlackJackPoints
+}
+
+func GetHandPoint(hand *[]deck.Card) int {
+
+	point := 0
+	for _, v := range *hand {
+
+		if v.Face() == 0 {
+			point += 11
+		}
+
+		if v.Face() >= 10 {
+			point += 10
+		}
+	}
+
+	return point
+
 }
 
 //REFERENCIA

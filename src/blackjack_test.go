@@ -3,11 +3,20 @@ package blackjack
 import (
 	"testing"
 
+	"github.com/adamclerk/deck"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestBlackJack(t *testing.T) {
-	assert.Equal(t, 21, 21, "Is BlackJack")
+	black_jack := New(OptionsBlackJack{})
+	d, _ := deck.New(deck.WithCards(deck.NewCard(deck.ACE, deck.CLUB), deck.NewCard(deck.JACK, deck.DIAMOND)), deck.Unshuffled)
+	assert.Equal(t, black_jack.Dealer.BlackjackCheck(d.Cards), true, "Is BlackJack")
+}
+
+func TestHandIsBurst(t *testing.T) {
+	black_jack := New(OptionsBlackJack{})
+	d, _ := deck.New(deck.WithCards(deck.NewCard(deck.ACE, deck.CLUB), deck.NewCard(deck.JACK, deck.DIAMOND), deck.NewCard(deck.JACK, deck.DIAMOND)), deck.Unshuffled)
+	assert.Equal(t, black_jack.Dealer.IsHandBurst(&d.Cards), true, "Mão estourada")
 }
 
 func TestAmountOfDeckDefault(t *testing.T) {
