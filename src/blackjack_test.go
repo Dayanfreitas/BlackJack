@@ -10,13 +10,13 @@ import (
 func TestBlackJack(t *testing.T) {
 	black_jack := New(OptionsBlackJack{})
 	d, _ := deck.New(deck.WithCards(deck.NewCard(deck.ACE, deck.CLUB), deck.NewCard(deck.JACK, deck.DIAMOND)), deck.Unshuffled)
-	assert.Equal(t, black_jack.Dealer.BlackjackCheck(d.Cards), true, "Is BlackJack")
+	assert.Equal(t, black_jack.Dealer.BlackjackCheck(&d.Cards), true, "Is BlackJack")
 }
 
 func TestHandIsBurst(t *testing.T) {
 	black_jack := New(OptionsBlackJack{})
 	d, _ := deck.New(deck.WithCards(deck.NewCard(deck.ACE, deck.CLUB), deck.NewCard(deck.JACK, deck.DIAMOND), deck.NewCard(deck.JACK, deck.DIAMOND)), deck.Unshuffled)
-	assert.Equal(t, black_jack.Dealer.IsHandBurst(&d.Cards), true, "Mão estourada")
+	assert.Equal(t, black_jack.Dealer.IsHandBurst(&d.Cards), true, "Hand is Burst")
 }
 
 func TestAmountOfDeckDefault(t *testing.T) {
@@ -59,5 +59,12 @@ func TestPaymentOddsSixForFive(t *testing.T) {
 //Dealer
 func TestDealerCanHit(t *testing.T) {
 	black_jack := New(OptionsBlackJack{})
-	assert.Equal(t, black_jack.Dealer.CanHit(), true, "Dealer pode pedir")
+	assert.Equal(t, black_jack.Dealer.CanHit(), true, "Dealer can hit")
+}
+
+func TestDealerCanotHit(t *testing.T) {
+	black_jack := New(OptionsBlackJack{})
+	d, _ := deck.New(deck.WithCards(deck.NewCard(deck.ACE, deck.CLUB), deck.NewCard(deck.JACK, deck.DIAMOND)), deck.Unshuffled)
+	black_jack.Dealer.Hand = d.Cards
+	assert.Equal(t, black_jack.Dealer.CanHit(), false, "Dealer can´t hit")
 }
