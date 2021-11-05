@@ -6,7 +6,7 @@ import (
 
 func main() {
 
-	blackjack.New(blackjack.OptionsBlackJack{})
-	// blackjack.Hello()
+	// blackjack.New(blackjack.OptionsBlackJack{})
+	blackjack.Hello()
 	// blackjack.BlackJack.Cards
 }
