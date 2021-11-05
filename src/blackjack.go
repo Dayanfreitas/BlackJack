@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/adamclerk/deck"
-	"github.com/bxcodec/faker/v3"
 )
 
 const (
@@ -12,25 +11,34 @@ const (
 	DeckNumberDefault = 1
 	DealerCanHit      = 16
 	BlackJackPoints   = 21
+	Increments        = 1
+	Decrements        = -1
+	Neutral           = 0
 )
 
 // const pointCartOfBalck
 // card values ​​in black ja
-type Play interface {
-	teste() string
+type player interface {
+	teste() int
 	// GetHandPoint() int
 }
 
-func teste(p Play) string {
+func teste(p player) int {
 	return p.teste()
 }
 
-func (d *Dealer) teste() string {
-	return "oi"
+func (d *Dealer) teste() int {
+	fmt.Println("p.Hand")
+	fmt.Println(d.Hand)
+
+	return 21
 }
 
-func (p *Player) teste() string {
-	return "oi player"
+func (p *Player) teste() int {
+	fmt.Println("p.Hand")
+	fmt.Println(p.Hand)
+
+	return 20
 }
 
 // func CalcPoint(p player) int {
@@ -38,9 +46,10 @@ func (p *Player) teste() string {
 // }
 
 type Player struct {
-	Id   string      `faker:"uuid_digit"`
-	Name string      `faker:"first_name"`
-	Hand []deck.Card `faker:"-"`
+	Id        string      `faker:"uuid_digit"`
+	Name      string      `faker:"first_name"`
+	Hand      []deck.Card `faker:"-"`
+	CountCard int         `faker:"-"`
 }
 
 type Dealer struct {
@@ -61,29 +70,29 @@ type BlackJack struct {
 
 func Hello() {
 
-	// d1, _ := deck.New()
-	// d2, _ := deck.New()
+	d1, _ := deck.New()
+	d2, _ := deck.New()
 
 	// fmt.Print(d2)
 
-	player := Player{}
-	err := faker.FakeData(&player)
-	if err != nil {
-		fmt.Println(err)
-	}
+	// player := Player{}
+	// err := faker.FakeData(&player)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
 
-	dealer := Dealer{}
-	err = faker.FakeData(&dealer)
-	// err := faker.FakeData(&dealer.Player)
-	if err != nil {
-		fmt.Println(err)
-	}
+	// dealer := Dealer{}
+	// err = faker.FakeData(&dealer)
+	// // err := faker.FakeData(&dealer.Player)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
 
-	fmt.Println("player")
-	fmt.Println(player)
+	// fmt.Println("player")
+	// fmt.Println(player)
 
-	fmt.Println("Delaer")
-	fmt.Println(dealer)
+	// fmt.Println("Delaer")
+	// fmt.Println(dealer)
 
 	// black_jack := BlackJack{Deck: *d1}
 	black_jack := New(OptionsBlackJack{})
@@ -95,7 +104,12 @@ func Hello() {
 	// fmt.Printf("%s\n", teste(&black_jack.Dealer))
 	// fmt.Printf("%s\n", teste(&black_jack.Players[0]))
 	// fmt.Println(black_jack.Dealer.odds)
-	// fmt.Println(teste(black_jack.Players[0]))
+
+	black_jack.Players[0].Hand = d1.Cards
+	black_jack.Dealer.Hand = d2.Cards
+
+	fmt.Printf("%d\n", black_jack.Dealer.CountPoints(&black_jack.Players[0]))
+	fmt.Printf("%d\n", black_jack.Dealer.CountPoints(&black_jack.Dealer))
 }
 
 func (d *Dealer) PaymentOdds(bet float64) float64 {
@@ -172,6 +186,8 @@ func (p *Player) GetHandPoint(hand *[]deck.Card) int {
 
 		if v.Face() >= 10 {
 			point += 10
+		} else {
+			point += v.Face()
 		}
 	}
 
@@ -187,6 +203,41 @@ func (p *Player) GetHandPoint(hand *[]deck.Card) int {
 
 	return point
 
+}
+
+func (d *Dealer) CountPoints(p player) int {
+	return teste(p)
+}
+
+func InBetween(value, start, end int) bool {
+
+	if (value >= start) && (value <= end) {
+		return true
+	}
+	return false
+}
+
+func (p *Player) IncrementsDecrementsOrNeutral(c *deck.Card) int {
+	//<2>----<6> +1
+	//<7>----<9>  0
+	//<10>---<A> -1
+
+	v := c.Face()
+
+	if InBetween(v, int(deck.TWO), int(deck.SIX)) {
+		return Increments
+	}
+
+	if InBetween(v, int(deck.TEN), int(deck.KING)) || (v == int(deck.ACE)) {
+		return Decrements
+	}
+
+	return Neutral
+}
+
+func (p *Player) CountCards(c *deck.Card) int {
+	p.CountCard += p.IncrementsDecrementsOrNeutral(c)
+	return p.CountCard
 }
 
 // ace convenience

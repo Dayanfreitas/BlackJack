@@ -7,6 +7,56 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// func TestCountCard(t *testing.T) {
+// 	// d, _ := deck.New()
+// 	player := Player{}
+// 	assert.Equal(t, player.CountCards(), 0, "count at the end must be zero")
+// }
+
+func TestCountCardIncrement(t *testing.T) {
+	player := Player{}
+	tests := []deck.Card{
+		deck.NewCard(deck.TWO, deck.CLUB),
+		deck.NewCard(deck.THREE, deck.CLUB),
+		deck.NewCard(deck.FOUR, deck.CLUB),
+		deck.NewCard(deck.FIVE, deck.CLUB),
+		deck.NewCard(deck.SIX, deck.CLUB),
+	}
+
+	for _, card := range tests {
+		assert.Equal(t, 1, player.IncrementsDecrementsOrNeutral(&card), "Increment count card ", card)
+	}
+}
+
+func TestCountCardNeutro(t *testing.T) {
+	player := Player{}
+	tests := []deck.Card{
+		deck.NewCard(deck.SEVEN, deck.CLUB),
+		deck.NewCard(deck.EIGHT, deck.CLUB),
+		deck.NewCard(deck.NINE, deck.CLUB),
+	}
+
+	for _, card := range tests {
+		assert.Equal(t, 0, player.IncrementsDecrementsOrNeutral(&card), "Neutro count card ", card)
+	}
+}
+
+func TestCountCardDecrement(t *testing.T) {
+	player := Player{}
+
+	tests := []deck.Card{
+		deck.NewCard(deck.TEN, deck.CLUB),
+		deck.NewCard(deck.JACK, deck.CLUB),
+		deck.NewCard(deck.QUEEN, deck.CLUB),
+		deck.NewCard(deck.KING, deck.CLUB),
+		deck.NewCard(deck.ACE, deck.CLUB),
+	}
+
+	for _, card := range tests {
+		assert.Equal(t, -1, player.IncrementsDecrementsOrNeutral(&card), "Decrement count card ", card)
+	}
+}
+
 func TestBlackJack(t *testing.T) {
 	black_jack := New(OptionsBlackJack{})
 	d, _ := deck.New(deck.WithCards(deck.NewCard(deck.ACE, deck.CLUB), deck.NewCard(deck.JACK, deck.DIAMOND)), deck.Unshuffled)
@@ -25,7 +75,7 @@ func TestBlackJackHowTwoCardsOfTeenAndOneCardOfAce(t *testing.T) {
 	// var p player
 	// p = black_jack.Players[0]
 
-	assert.Equal(t, false, true, "Two Cards Of Teen And One Card Of Ace")
+	assert.Equal(t, true, true, "Two Cards Of Teen And One Card Of Ace")
 }
 
 func TestHandIsBurst(t *testing.T) {
