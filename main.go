@@ -1,6 +1,7 @@
 package main
 
 import (
+	blackjack "Dayanfreitas/BlackJack/src"
 	"fmt"
 
 	"github.com/adamclerk/deck"
@@ -9,8 +10,8 @@ import (
 func main() {
 
 	// blackjack.New(blackjack.OptionsBlackJack{})
-	// blackjack.Hello()
-	ExampleWithCards()
+	blackjack.Hello()
+	// ExampleWithCards()
 	// blackjack.BlackJack.Cards
 }
 

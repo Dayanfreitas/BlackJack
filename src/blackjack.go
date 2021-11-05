@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/adamclerk/deck"
+	"github.com/bxcodec/faker/v3"
 )
 
 const (
@@ -15,17 +16,37 @@ const (
 
 // const pointCartOfBalck
 // card values ​​in black ja
+type Play interface {
+	teste() string
+	// GetHandPoint() int
+}
+
+func teste(p Play) string {
+	return p.teste()
+}
+
+func (d *Dealer) teste() string {
+	return "oi"
+}
+
+func (p *Player) teste() string {
+	return "oi player"
+}
+
+// func CalcPoint(p player) int {
+// 	return p.GetHandPoint()
+// }
 
 type Player struct {
-	Id   int
-	Name string
-	Hand []deck.Card
+	Id   string      `faker:"uuid_digit"`
+	Name string      `faker:"first_name"`
+	Hand []deck.Card `faker:"-"`
 }
 
 type Dealer struct {
 	Player
-	odds  float64
-	Point int
+	odds  float64 `faker:"-"`
+	Point int     `faker:"-"`
 }
 
 type BlackJack struct {
@@ -34,64 +55,47 @@ type BlackJack struct {
 	Odds       float64
 	Deck       deck.Deck
 	Cards      []deck.Card
+	Players    []Player
 	Dealer     Dealer
 }
 
 func Hello() {
-	d1, _ := deck.New()
-	d2, _ := deck.New()
 
-	black_jack := BlackJack{Deck: *d1}
+	// d1, _ := deck.New()
+	// d2, _ := deck.New()
 
-	fmt.Printf("BLACK JACK -> %v", black_jack)
-	index := 0
-	for _, v := range d2.Cards {
-		index++
-		fmt.Println(v.Face())
+	// fmt.Print(d2)
+
+	player := Player{}
+	err := faker.FakeData(&player)
+	if err != nil {
+		fmt.Println(err)
 	}
 
-	fmt.Println("Count ->", index)
+	dealer := Dealer{}
+	err = faker.FakeData(&dealer)
+	// err := faker.FakeData(&dealer.Player)
+	if err != nil {
+		fmt.Println(err)
+	}
 
-	// p := Player{}
-	// dealer := Dealer{}
+	fmt.Println("player")
+	fmt.Println(player)
 
-	// fmt.Println()
-	// dealer.Name = "Dealer"
-	// dealer.Hand = *&d1.Cards
+	fmt.Println("Delaer")
+	fmt.Println(dealer)
 
-	// p.Name = "Dayan"
-	// p.Hand = *&d2.Cards
+	// black_jack := BlackJack{Deck: *d1}
+	black_jack := New(OptionsBlackJack{})
+	// black_jack.Dealer = Dealer{}
+	black_jack.Players = append(black_jack.Players, Player{Id: "2", Name: "Dayan"})
 
-	// fmt.Println("JOGADOR")
-	// fmt.Println(dealer.Name)
-	// fmt.Println(dealer.Hand)
-
-	// fmt.Println("JOGADOR")
-	// fmt.Println(p.Name)
-	// fmt.Println(p.Hand)
-
-	// player1Hand, _ := deck.New(deck.Empty)
-	// player2Hand, _ := deck.New(deck.Empty)
-
-	// // deck.Debugf(false, "INIT")
-	// card1 := deck.NewCard(deck.TWO, deck.SPADE)ls
-	// deck.Debugf(true, "DECK_>\n%s", d)
-
-	// fmt.Println(len(d.Cards))
-	// fmt.Print("player1Hand->\n")
-	// fmt.Print(player1Hand)
-
-	// fmt.Print("player2Hand->\n")
-	// fmt.Print(player2Hand)
-	// fmt.Print()
-
-	// fmt.Print(deck.TWO)
-	// fmt.Printf("type -> %T\n", d.Cards)
-
-	// for _, c := range black_jack.Cards {
-	// 	fmt.Printf("type -> %T\n", c)
-	// }
-
+	// fmt.Println(black_jack.Dealer.teste())
+	// fmt.Println(black_jack.Players[0].teste())
+	// fmt.Printf("%s\n", teste(&black_jack.Dealer))
+	// fmt.Printf("%s\n", teste(&black_jack.Players[0]))
+	// fmt.Println(black_jack.Dealer.odds)
+	// fmt.Println(teste(black_jack.Players[0]))
 }
 
 func (d *Dealer) PaymentOdds(bet float64) float64 {
@@ -128,18 +132,18 @@ func New(optionsBlackJack OptionsBlackJack) *BlackJack {
 }
 
 func (d *Dealer) CanHit() bool {
-	return GetHandPoint(&d.Hand) <= DealerCanHit
+	return d.GetHandPoint(&d.Hand) <= DealerCanHit
 }
 
-func (d *Dealer) BlackjackCheck(hand *[]deck.Card) bool {
-	return GetHandPoint(hand) == BlackJackPoints
+func (d *Dealer) IsBlackjack(hand *[]deck.Card) bool {
+	return d.GetHandPoint(hand) == BlackJackPoints
 }
 
 func (d *Dealer) IsHandBurst(hand *[]deck.Card) bool {
-	return GetHandPoint(hand) > BlackJackPoints
+	return d.GetHandPoint(hand) > BlackJackPoints
 }
 
-func GetHandPoint(hand *[]deck.Card) int {
+func (d *Dealer) GetHandPoint(hand *[]deck.Card) int {
 
 	point := 0
 	for _, v := range *hand {
@@ -156,6 +160,36 @@ func GetHandPoint(hand *[]deck.Card) int {
 	return point
 
 }
+
+func (p *Player) GetHandPoint(hand *[]deck.Card) int {
+
+	point := 0
+	for _, v := range *hand {
+
+		if v.Face() == 0 {
+			point += 11
+		}
+
+		if v.Face() >= 10 {
+			point += 10
+		}
+	}
+
+	// ace convenience
+	for _, v := range *hand {
+		// ace
+		if point > BlackJackPoints {
+			if v.Face() == 0 {
+				point -= 10
+			}
+		}
+	}
+
+	return point
+
+}
+
+// ace convenience
 
 //REFERENCIA
 // type Person struct {

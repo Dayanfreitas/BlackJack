@@ -10,13 +10,52 @@ import (
 func TestBlackJack(t *testing.T) {
 	black_jack := New(OptionsBlackJack{})
 	d, _ := deck.New(deck.WithCards(deck.NewCard(deck.ACE, deck.CLUB), deck.NewCard(deck.JACK, deck.DIAMOND)), deck.Unshuffled)
-	assert.Equal(t, black_jack.Dealer.BlackjackCheck(&d.Cards), true, "Is BlackJack")
+	assert.Equal(t, black_jack.Dealer.IsBlackjack(&d.Cards), true, "Is BlackJack")
+}
+
+func TestBlackJackHowTwoCardsOfTeenAndOneCardOfAce(t *testing.T) {
+	// black_jack := New(OptionsBlackJack{})
+	// d, _ := deck.New(
+	// 	deck.WithCards(
+	// 		deck.NewCard(deck.ACE, deck.CLUB),
+	// 		deck.NewCard(deck.JACK, deck.DIAMOND),
+	// 		deck.NewCard(deck.QUEEN, deck.SPADE),
+	// 	), deck.Unshuffled)
+	// black_jack.Players[0] = Player{Hand: d.Cards}
+	// var p player
+	// p = black_jack.Players[0]
+
+	assert.Equal(t, false, true, "Two Cards Of Teen And One Card Of Ace")
 }
 
 func TestHandIsBurst(t *testing.T) {
 	black_jack := New(OptionsBlackJack{})
 	d, _ := deck.New(deck.WithCards(deck.NewCard(deck.ACE, deck.CLUB), deck.NewCard(deck.JACK, deck.DIAMOND), deck.NewCard(deck.JACK, deck.DIAMOND)), deck.Unshuffled)
 	assert.Equal(t, black_jack.Dealer.IsHandBurst(&d.Cards), true, "Hand is Burst")
+}
+
+func TestRandomHand(t *testing.T) {
+	type test struct {
+		Deck   deck.Deck
+		Answer int
+	}
+
+	black_jack := New(OptionsBlackJack{})
+	d1, _ := deck.New(deck.WithCards(deck.NewCard(deck.ACE, deck.CLUB), deck.NewCard(deck.JACK, deck.DIAMOND)), deck.Unshuffled)
+	d2, _ := deck.New(deck.WithCards(deck.NewCard(deck.ACE, deck.CLUB), deck.NewCard(deck.JACK, deck.DIAMOND)), deck.Unshuffled)
+	d3, _ := deck.New(deck.WithCards(deck.NewCard(deck.ACE, deck.CLUB), deck.NewCard(deck.JACK, deck.DIAMOND)), deck.Unshuffled)
+
+	tests := []test{
+		{Deck: *d1, Answer: 21},
+		{Deck: *d2, Answer: 21},
+		{Deck: *d3, Answer: 21},
+	}
+
+	for _, v := range tests {
+		assert.Equal(t, black_jack.Dealer.GetHandPoint(&v.Deck.Cards), v.Answer, "Random Hand")
+	}
+	// d, _ := deck.New(deck.WithCards(deck.NewCard(deck.ACE, deck.CLUB), deck.NewCard(deck.JACK, deck.DIAMOND), deck.NewCard(deck.JACK, deck.DIAMOND)), deck.Unshuffled)
+	// assert.Equal(t, black_jack.Dealer.IsHandBurst(&d.Cards), true, "Hand is Burst")
 }
 
 func TestAmountOfDeckDefault(t *testing.T) {
