@@ -11,9 +11,6 @@ const (
 	DeckNumberDefault = 1
 )
 
-type Hand struct {
-}
-
 type Player struct {
 	Id   int
 	Name string
@@ -22,45 +19,51 @@ type Player struct {
 
 type Dealer struct {
 	Player
-	odds float64
+	odds  float64
+	Point int
 }
 
 type BlackJack struct {
 	// numberPlayers int
 	DeckNumber int
 	Odds       float64
+	Deck       deck.Deck
 	Cards      []deck.Card
 	Dealer     Dealer
 }
 
 func Hello() {
-	d, _ := deck.New()
+	d1, _ := deck.New()
+	d2, _ := deck.New()
 
-	black_jack := BlackJack{Cards: d.Cards}
+	black_jack := BlackJack{Deck: *d1}
 
-	fmt.Printf("%v", black_jack)
+	fmt.Printf("BLACK JACK -> %v", black_jack)
+	index := 0
+	for _, v := range d2.Cards {
+		index++
+		fmt.Println(v.Face())
+	}
 
-	p := Player{}
-	dealer := Dealer{}
+	fmt.Println("Count ->", index)
 
-	fmt.Println()
-	dealer.Name = "Dealer"
-	dealer.Hand = *&d.Cards
-	// dealer.odds = float64() 3/5
+	// p := Player{}
+	// dealer := Dealer{}
 
-	p.Name = "Dayan"
-	p.Hand = *&d.Cards
+	// fmt.Println()
+	// dealer.Name = "Dealer"
+	// dealer.Hand = *&d1.Cards
 
-	// fmt.Printf("player -> %T\n", p)
-	// fmt.Printf("dealer -> %T\n", dealer)
+	// p.Name = "Dayan"
+	// p.Hand = *&d2.Cards
 
-	fmt.Println("JOGADOR")
-	fmt.Println(dealer.Name)
-	fmt.Println(dealer.Hand)
+	// fmt.Println("JOGADOR")
+	// fmt.Println(dealer.Name)
+	// fmt.Println(dealer.Hand)
 
-	fmt.Println("JOGADOR")
-	fmt.Println(p.Name)
-	fmt.Println(p.Hand)
+	// fmt.Println("JOGADOR")
+	// fmt.Println(p.Name)
+	// fmt.Println(p.Hand)
 
 	// player1Hand, _ := deck.New(deck.Empty)
 	// player2Hand, _ := deck.New(deck.Empty)
@@ -108,13 +111,23 @@ func New(optionsBlackJack OptionsBlackJack) *BlackJack {
 	if optionsBlackJack.Odds != options.Odds && optionsBlackJack.Odds > 0 {
 		options.Odds = optionsBlackJack.Odds
 	}
+	d, _ := deck.New()
 
 	black_jack := BlackJack{
 		DeckNumber: options.DeckNumber,
+		Deck:       *d,
 		Odds:       options.Odds,
 		Dealer:     Dealer{odds: options.Odds},
 	}
 	return &black_jack
+}
+
+func (d *Dealer) CanHit() bool {
+	if d.Point <= 16 {
+		return true
+	}
+
+	return false
 }
 
 //REFERENCIA
