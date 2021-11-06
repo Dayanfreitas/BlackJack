@@ -7,11 +7,21 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// func TestCountCard(t *testing.T) {
-// 	// d, _ := deck.New()
-// 	player := Player{}
-// 	assert.Equal(t, player.CountCards(), 0, "count at the end must be zero")
-// }
+const (
+	INCREMENTS = 1
+	NEUTRO     = 0
+	DECREMENT  = -1
+)
+
+func TestCountCard(t *testing.T) {
+	d, _ := deck.New()
+	player := Player{}
+	for _, v := range d.Cards {
+		player.CountCards(&v)
+	}
+
+	assert.Equal(t, NEUTRO, player.CountCard, "Count at the end must be zero")
+}
 
 func TestCountCardIncrement(t *testing.T) {
 	player := Player{}
@@ -24,7 +34,7 @@ func TestCountCardIncrement(t *testing.T) {
 	}
 
 	for _, card := range tests {
-		assert.Equal(t, 1, player.IncrementsDecrementsOrNeutral(&card), "Increment count card ", card)
+		assert.Equal(t, INCREMENTS, player.IncrementsDecrementsOrNeutral(&card), "Increment count card ", card)
 	}
 }
 
@@ -37,7 +47,7 @@ func TestCountCardNeutro(t *testing.T) {
 	}
 
 	for _, card := range tests {
-		assert.Equal(t, 0, player.IncrementsDecrementsOrNeutral(&card), "Neutro count card ", card)
+		assert.Equal(t, Neutral, player.IncrementsDecrementsOrNeutral(&card), "Neutro count card ", card)
 	}
 }
 
@@ -53,8 +63,49 @@ func TestCountCardDecrement(t *testing.T) {
 	}
 
 	for _, card := range tests {
-		assert.Equal(t, -1, player.IncrementsDecrementsOrNeutral(&card), "Decrement count card ", card)
+		assert.Equal(t, DECREMENT, player.IncrementsDecrementsOrNeutral(&card), "Decrement count card ", card)
 	}
+}
+
+func TestCanSplit(t *testing.T) {
+	black_jack := New(OptionsBlackJack{})
+	d, _ := deck.New(
+		deck.WithCards(
+			deck.NewCard(deck.QUEEN, deck.DIAMOND),
+			deck.NewCard(deck.QUEEN, deck.SPADE),
+		), deck.Unshuffled)
+
+	p := Player{Hand: d.Cards}
+
+	assert.Equal(t, true, black_jack.Dealer.CanSplit(&p), "Can split")
+}
+
+func TestCanSplitCase2(t *testing.T) {
+	black_jack := New(OptionsBlackJack{})
+	d, _ := deck.New(
+		deck.WithCards(
+			deck.NewCard(deck.TEN, deck.DIAMOND),
+			deck.NewCard(deck.QUEEN, deck.SPADE),
+		), deck.Unshuffled)
+
+	p := Player{Hand: d.Cards}
+	// black_jack.Players = append(black_jack.Players, )
+
+	assert.Equal(t, true, black_jack.Dealer.CanSplit(&p), "Can split 10 and dama")
+}
+
+func TestCanotSplit(t *testing.T) {
+	black_jack := New(OptionsBlackJack{})
+	d, _ := deck.New(
+		deck.WithCards(
+			deck.NewCard(deck.ACE, deck.DIAMOND),
+			deck.NewCard(deck.QUEEN, deck.SPADE),
+		), deck.Unshuffled)
+
+	p := Player{Hand: d.Cards}
+	// black_jack.Players = append(black_jack.Players, )
+
+	assert.Equal(t, false, black_jack.Dealer.CanSplit(&p), "Canot split")
 }
 
 func TestBlackJack(t *testing.T) {
@@ -64,18 +115,17 @@ func TestBlackJack(t *testing.T) {
 }
 
 func TestBlackJackHowTwoCardsOfTeenAndOneCardOfAce(t *testing.T) {
-	// black_jack := New(OptionsBlackJack{})
-	// d, _ := deck.New(
-	// 	deck.WithCards(
-	// 		deck.NewCard(deck.ACE, deck.CLUB),
-	// 		deck.NewCard(deck.JACK, deck.DIAMOND),
-	// 		deck.NewCard(deck.QUEEN, deck.SPADE),
-	// 	), deck.Unshuffled)
-	// black_jack.Players[0] = Player{Hand: d.Cards}
-	// var p player
-	// p = black_jack.Players[0]
+	black_jack := New(OptionsBlackJack{})
+	d, _ := deck.New(
+		deck.WithCards(
+			deck.NewCard(deck.ACE, deck.CLUB),
+			deck.NewCard(deck.JACK, deck.DIAMOND),
+			deck.NewCard(deck.QUEEN, deck.SPADE),
+		), deck.Unshuffled)
 
-	assert.Equal(t, true, true, "Two Cards Of Teen And One Card Of Ace")
+	black_jack.Players = append(black_jack.Players, Player{Hand: d.Cards})
+
+	assert.Equal(t, 21, black_jack.Dealer.CountPoints(&black_jack.Players[0]), "Two Cards Of Teen And One Card Of Ace")
 }
 
 func TestHandIsBurst(t *testing.T) {
@@ -104,8 +154,6 @@ func TestRandomHand(t *testing.T) {
 	for _, v := range tests {
 		assert.Equal(t, black_jack.Dealer.GetHandPoint(&v.Deck.Cards), v.Answer, "Random Hand")
 	}
-	// d, _ := deck.New(deck.WithCards(deck.NewCard(deck.ACE, deck.CLUB), deck.NewCard(deck.JACK, deck.DIAMOND), deck.NewCard(deck.JACK, deck.DIAMOND)), deck.Unshuffled)
-	// assert.Equal(t, black_jack.Dealer.IsHandBurst(&d.Cards), true, "Hand is Burst")
 }
 
 func TestAmountOfDeckDefault(t *testing.T) {

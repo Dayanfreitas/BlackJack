@@ -16,34 +16,37 @@ const (
 	Neutral           = 0
 )
 
-// const pointCartOfBalck
-// card values ​​in black ja
+var TablePointCards = map[int]int{
+	int(deck.ACE):   0,
+	int(deck.TWO):   2,
+	int(deck.THREE): 3,
+	int(deck.FOUR):  4,
+	int(deck.FIVE):  5,
+	int(deck.SIX):   6,
+	int(deck.SEVEN): 7,
+	int(deck.EIGHT): 8,
+	int(deck.NINE):  9,
+	int(deck.TEN):   10,
+	int(deck.JACK):  10,
+	int(deck.QUEEN): 10,
+	int(deck.KING):  10,
+}
+
 type player interface {
-	teste() int
-	// GetHandPoint() int
+	HandCount() int
 }
 
-func teste(p player) int {
-	return p.teste()
+func HandCount(p player) int {
+	return p.HandCount()
 }
 
-func (d *Dealer) teste() int {
-	fmt.Println("p.Hand")
-	fmt.Println(d.Hand)
-
-	return 21
+func (d *Dealer) HandCount() int {
+	return d.GetHandPoint(&d.Hand)
 }
 
-func (p *Player) teste() int {
-	fmt.Println("p.Hand")
-	fmt.Println(p.Hand)
-
-	return 20
+func (p *Player) HandCount() int {
+	return p.GetHandPoint(&p.Hand)
 }
-
-// func CalcPoint(p player) int {
-// 	return p.GetHandPoint()
-// }
 
 type Player struct {
 	Id        string      `faker:"uuid_digit"`
@@ -59,13 +62,13 @@ type Dealer struct {
 }
 
 type BlackJack struct {
-	// numberPlayers int
 	DeckNumber int
 	Odds       float64
 	Deck       deck.Deck
 	Cards      []deck.Card
 	Players    []Player
 	Dealer     Dealer
+	Surrender  bool
 }
 
 func Hello() {
@@ -206,7 +209,7 @@ func (p *Player) GetHandPoint(hand *[]deck.Card) int {
 }
 
 func (d *Dealer) CountPoints(p player) int {
-	return teste(p)
+	return HandCount(p)
 }
 
 func InBetween(value, start, end int) bool {
@@ -238,6 +241,13 @@ func (p *Player) IncrementsDecrementsOrNeutral(c *deck.Card) int {
 func (p *Player) CountCards(c *deck.Card) int {
 	p.CountCard += p.IncrementsDecrementsOrNeutral(c)
 	return p.CountCard
+}
+
+func (d *Dealer) CanSplit(p *Player) bool {
+	card1 := int(p.Hand[0].Face())
+	card2 := int(p.Hand[1].Face())
+
+	return (len(p.Hand) == 2) && (TablePointCards[card1] == TablePointCards[card2])
 }
 
 // ace convenience
