@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/adamclerk/deck"
+	"github.com/bxcodec/faker"
 )
 
 const (
@@ -78,11 +79,11 @@ func Hello() {
 
 	// fmt.Print(d2)
 
-	// player := Player{}
-	// err := faker.FakeData(&player)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
+	player := Player{}
+	err := faker.FakeData(&player)
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	// dealer := Dealer{}
 	// err = faker.FakeData(&dealer)
@@ -91,8 +92,8 @@ func Hello() {
 	// 	fmt.Println(err)
 	// }
 
-	// fmt.Println("player")
-	// fmt.Println(player)
+	fmt.Println("player")
+	fmt.Println(player)
 
 	// fmt.Println("Delaer")
 	// fmt.Println(dealer)
