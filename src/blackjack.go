@@ -63,21 +63,23 @@ type Dealer struct {
 }
 
 type BlackJack struct {
-	DeckNumber int
-	Odds       float64
-	Deck       deck.Deck
-	Cards      []deck.Card
-	Players    []Player
-	Dealer     Dealer
-	Surrender  bool
+	DeckNumber  int
+	Odds        float64
+	Deck        deck.Deck
+	Cards       []deck.Card
+	Players     []Player
+	HashPlayers map[string]player
+	Dealer      Dealer
+	MaxPlayers  int
+	Surrender   bool
 }
 
 func Hello() {
 
-	d1, _ := deck.New()
-	d2, _ := deck.New()
+	// d1, _ := deck.New()
+	// d2, _ := deck.New()
 
-	// fmt.Print(d2)
+	black_jack := New(OptionsBlackJack{})
 
 	player := Player{}
 	err := faker.FakeData(&player)
@@ -85,6 +87,7 @@ func Hello() {
 		fmt.Println(err)
 	}
 
+	player.SetDownTable(black_jack)
 	// dealer := Dealer{}
 	// err = faker.FakeData(&dealer)
 	// // err := faker.FakeData(&dealer.Player)
@@ -92,16 +95,17 @@ func Hello() {
 	// 	fmt.Println(err)
 	// }
 
-	fmt.Println("player")
-	fmt.Println(player)
+	// fmt.Println("")
+	// fmt.Println("player")
+	// fmt.Println(black_jack.Players[0])
 
 	// fmt.Println("Delaer")
 	// fmt.Println(dealer)
 
 	// black_jack := BlackJack{Deck: *d1}
-	black_jack := New(OptionsBlackJack{})
+	// black_jack := New(OptionsBlackJack{})
 	// black_jack.Dealer = Dealer{}
-	black_jack.Players = append(black_jack.Players, Player{Id: "2", Name: "Dayan"})
+	// black_jack.Players = append(black_jack.Players, Player{Id: "2", Name: "Dayan"})
 
 	// fmt.Println(black_jack.Dealer.teste())
 	// fmt.Println(black_jack.Players[0].teste())
@@ -109,11 +113,11 @@ func Hello() {
 	// fmt.Printf("%s\n", teste(&black_jack.Players[0]))
 	// fmt.Println(black_jack.Dealer.odds)
 
-	black_jack.Players[0].Hand = d1.Cards
-	black_jack.Dealer.Hand = d2.Cards
+	// black_jack.Players[0].Hand = d1.Cards
+	// black_jack.Dealer.Hand = d2.Cards
 
-	fmt.Printf("%d\n", black_jack.Dealer.CountPoints(&black_jack.Players[0]))
-	fmt.Printf("%d\n", black_jack.Dealer.CountPoints(&black_jack.Dealer))
+	// fmt.Printf("%d\n", black_jack.Dealer.CountPoints(&black_jack.Players[0]))
+	// fmt.Printf("%d\n", black_jack.Dealer.CountPoints(&black_jack.Dealer))
 }
 
 func (d *Dealer) PaymentOdds(bet float64) float64 {
@@ -145,6 +149,7 @@ func New(optionsBlackJack OptionsBlackJack) *BlackJack {
 		Deck:       *d,
 		Odds:       options.Odds,
 		Dealer:     Dealer{odds: options.Odds},
+		MaxPlayers: 7,
 	}
 	return &black_jack
 }
@@ -249,6 +254,24 @@ func (d *Dealer) CanSplit(p *Player) bool {
 	card2 := int(p.Hand[1].Face())
 
 	return (len(p.Hand) == 2) && (TablePointCards[card1] == TablePointCards[card2])
+}
+
+func (b *BlackJack) AddPlayer(p *Player) {
+	b.Players = append(b.Players, *p)
+	fmt.Printf("Mesa tal %d/%d jogadores", len(b.Players), b.MaxPlayers)
+}
+
+func (b *BlackJack) RemovePlayer(p *Player) {
+	b.Players = append(b.Players, *p)
+	fmt.Printf("Mesa tal %d/%d jogadores", len(b.Players), b.MaxPlayers)
+}
+
+func (p *Player) SetDownTable(b *BlackJack) {
+	b.AddPlayer(p)
+}
+
+func (p *Player) LeaveTheTable(b *BlackJack) {
+	b.RemovePlayer(p)
 }
 
 // ace convenience

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/adamclerk/deck"
+	"github.com/bxcodec/faker"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -12,6 +13,16 @@ const (
 	NEUTRO     = 0
 	DECREMENT  = -1
 )
+
+func TestSetDownTable(t *testing.T) {
+	black_jack := New(OptionsBlackJack{})
+	player := Player{}
+	_ = faker.FakeData(&player)
+
+	player.SetDownTable(black_jack)
+
+	assert.Equal(t, black_jack.Players[0].Id, player.Id)
+}
 
 func TestCountCard(t *testing.T) {
 	d, _ := deck.New()
