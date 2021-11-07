@@ -18,10 +18,17 @@ func TestSetDownTable(t *testing.T) {
 	black_jack := New(OptionsBlackJack{})
 	player := Player{}
 	_ = faker.FakeData(&player)
-
 	player.SetDownTable(black_jack)
+	assert.Equal(t, black_jack.HashPlayers[player.Id].Id, player.Id, "Player set down")
+}
 
-	assert.Equal(t, black_jack.Players[0].Id, player.Id)
+func TestGiveUpTable(t *testing.T) {
+	black_jack := New(OptionsBlackJack{})
+	player := Player{}
+	_ = faker.FakeData(&player)
+	player.SetDownTable(black_jack)
+	player.GiveUp()
+	assert.Equal(t, len(black_jack.HashPlayers), 0, "Player Give Up")
 }
 
 func TestCountCard(t *testing.T) {

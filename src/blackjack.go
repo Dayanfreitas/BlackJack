@@ -54,6 +54,7 @@ type Player struct {
 	Name      string      `faker:"first_name"`
 	Hand      []deck.Card `faker:"-"`
 	CountCard int         `faker:"-"`
+	BlackJack *BlackJack  `faker:"-"`
 }
 
 type Dealer struct {
@@ -68,7 +69,7 @@ type BlackJack struct {
 	Deck        deck.Deck
 	Cards       []deck.Card
 	Players     []Player
-	HashPlayers map[string]player
+	HashPlayers map[string]*Player
 	Dealer      Dealer
 	MaxPlayers  int
 	Surrender   bool
@@ -87,7 +88,17 @@ func Hello() {
 		fmt.Println(err)
 	}
 
+	player2 := Player{}
+	err = faker.FakeData(&player2)
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	player.SetDownTable(black_jack)
+	player2.SetDownTable(black_jack)
+
+	black_jack.showPlayer()
+	player2.GiveUp()
 	// dealer := Dealer{}
 	// err = faker.FakeData(&dealer)
 	// // err := faker.FakeData(&dealer.Player)
@@ -145,11 +156,12 @@ func New(optionsBlackJack OptionsBlackJack) *BlackJack {
 	d, _ := deck.New()
 
 	black_jack := BlackJack{
-		DeckNumber: options.DeckNumber,
-		Deck:       *d,
-		Odds:       options.Odds,
-		Dealer:     Dealer{odds: options.Odds},
-		MaxPlayers: 7,
+		DeckNumber:  options.DeckNumber,
+		Deck:        *d,
+		Odds:        options.Odds,
+		Dealer:      Dealer{odds: options.Odds},
+		MaxPlayers:  7,
+		HashPlayers: make(map[string]*Player),
 	}
 	return &black_jack
 }
@@ -257,21 +269,35 @@ func (d *Dealer) CanSplit(p *Player) bool {
 }
 
 func (b *BlackJack) AddPlayer(p *Player) {
-	b.Players = append(b.Players, *p)
-	fmt.Printf("Mesa tal %d/%d jogadores", len(b.Players), b.MaxPlayers)
+	p.BlackJack = b
+	b.HashPlayers[p.Id] = p
+	fmt.Printf("Mesa tal %d/%d jogadores\n", len(b.HashPlayers), b.MaxPlayers)
 }
 
 func (b *BlackJack) RemovePlayer(p *Player) {
-	b.Players = append(b.Players, *p)
-	fmt.Printf("Mesa tal %d/%d jogadores", len(b.Players), b.MaxPlayers)
+	_, exist := b.HashPlayers[p.Id]
+	if exist {
+		delete(b.HashPlayers, p.Id)
+	}
+	_, exist = b.HashPlayers[p.Id]
+
+	fmt.Println()
+	fmt.Printf("Player [%s] give up\n", p.Name)
+	fmt.Printf("Mesa tal %d/%d jogadores\n", len(b.HashPlayers), b.MaxPlayers)
 }
 
 func (p *Player) SetDownTable(b *BlackJack) {
 	b.AddPlayer(p)
 }
 
-func (p *Player) LeaveTheTable(b *BlackJack) {
-	b.RemovePlayer(p)
+func (p *Player) GiveUp() {
+	p.BlackJack.RemovePlayer(p)
+}
+
+func (b *BlackJack) showPlayer() {
+	for _, v := range b.HashPlayers {
+		fmt.Printf("[%s]-> %s\n", v.Id, v.Name)
+	}
 }
 
 // ace convenience
