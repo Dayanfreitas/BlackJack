@@ -14,12 +14,42 @@ const (
 	DECREMENT  = -1
 )
 
+func TestGiveCards(t *testing.T) {
+	// black_jack := New(OptionsBlackJack{})
+	// deck := black_jack.Deck
+
+	// deck[0]
+	// desk[1]
+
+	// player := Player{}
+	// _ = faker.FakeData(&player)
+	// player.SetDownTable(black_jack)
+
+	// black_jack.Dealer.GiveCards(&player)
+
+	// assert.ElementsMatch(t,,cards, "")
+	// t.ElementsMatch([], [])
+	assert.Equal(t, 1, 2)
+}
+
 func TestSetDownTable(t *testing.T) {
 	black_jack := New(OptionsBlackJack{})
 	player := Player{}
 	_ = faker.FakeData(&player)
 	player.SetDownTable(black_jack)
 	assert.Equal(t, black_jack.HashPlayers[player.Id].Id, player.Id, "Player set down")
+}
+
+func TestCanotSetDownTable(t *testing.T) {
+	black_jack := New(OptionsBlackJack{})
+
+	for i := 0; i < black_jack.MaxPlayers+1; i++ {
+		player := Player{}
+		_ = faker.FakeData(&player)
+		player.SetDownTable(black_jack)
+	}
+
+	assert.Equal(t, len(black_jack.HashPlayers), 7, "Can't sit at the table")
 }
 
 func TestGiveUpTable(t *testing.T) {

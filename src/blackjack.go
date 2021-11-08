@@ -76,9 +76,13 @@ type BlackJack struct {
 }
 
 func Hello() {
-
+	// d := deck.New()
 	// d1, _ := deck.New()
-	// d2, _ := deck.New()
+	// arr := []
+	// d := string()
+	// arr := strings.Split(d1, "\n")
+
+	// fmt.Print(d1.Cards)
 
 	black_jack := New(OptionsBlackJack{})
 
@@ -99,6 +103,10 @@ func Hello() {
 
 	black_jack.showPlayer()
 	player2.GiveUp()
+	black_jack.showPlayer()
+
+	// fmt.Println(black_jack.Dealer)
+
 	// dealer := Dealer{}
 	// err = faker.FakeData(&dealer)
 	// // err := faker.FakeData(&dealer.Player)
@@ -155,11 +163,14 @@ func New(optionsBlackJack OptionsBlackJack) *BlackJack {
 	}
 	d, _ := deck.New()
 
+	dealer := Player{}
+	faker.FakeData(&dealer)
+
 	black_jack := BlackJack{
 		DeckNumber:  options.DeckNumber,
 		Deck:        *d,
 		Odds:        options.Odds,
-		Dealer:      Dealer{odds: options.Odds},
+		Dealer:      Dealer{Player: dealer, odds: options.Odds},
 		MaxPlayers:  7,
 		HashPlayers: make(map[string]*Player),
 	}
@@ -271,7 +282,7 @@ func (d *Dealer) CanSplit(p *Player) bool {
 func (b *BlackJack) AddPlayer(p *Player) {
 	p.BlackJack = b
 	b.HashPlayers[p.Id] = p
-	fmt.Printf("Mesa tal %d/%d jogadores\n", len(b.HashPlayers), b.MaxPlayers)
+	// fmt.Printf("Mesa tal %d/%d jogadores\n", len(b.HashPlayers), b.MaxPlayers)
 }
 
 func (b *BlackJack) RemovePlayer(p *Player) {
@@ -281,12 +292,16 @@ func (b *BlackJack) RemovePlayer(p *Player) {
 	}
 	_, exist = b.HashPlayers[p.Id]
 
-	fmt.Println()
-	fmt.Printf("Player [%s] give up\n", p.Name)
-	fmt.Printf("Mesa tal %d/%d jogadores\n", len(b.HashPlayers), b.MaxPlayers)
+	// fmt.Println()
+	// fmt.Printf("Player [%s] give up\n", p.Name)
+	// fmt.Printf("Mesa tal %d/%d jogadores\n", len(b.HashPlayers), b.MaxPlayers)
 }
 
 func (p *Player) SetDownTable(b *BlackJack) {
+	if len(b.HashPlayers) >= b.MaxPlayers {
+		return
+	}
+
 	b.AddPlayer(p)
 }
 
@@ -295,9 +310,18 @@ func (p *Player) GiveUp() {
 }
 
 func (b *BlackJack) showPlayer() {
+	fmt.Printf("___________Players_____________\n")
 	for _, v := range b.HashPlayers {
 		fmt.Printf("[%s]-> %s\n", v.Id, v.Name)
 	}
+}
+
+func (d *Dealer) GiveCards(p *Player) {
+	// first :=  [0]
+	// fmt.Println(first)
+	// dwarfs = dwarfs[1:]
+
+	// p.Hand[len(p.Hand)] =
 }
 
 // ace convenience
