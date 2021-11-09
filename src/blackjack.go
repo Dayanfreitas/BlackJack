@@ -319,13 +319,6 @@ func (b *BlackJack) showPlayer() {
 }
 
 func (d *Dealer) GiveCards(p *Player) {
-	// for _, playerOfTable := range d.BlackJack.Players {
-	// 	card := Pop(&d.BlackJack.Deck)
-
-	// 	playerOfTable.Hand = card
-	// }
-	// fmt.Println("Cars")
-
 	card := Pop(&d.BlackJack.Deck)
 	p.Hand = append(p.Hand, card)
 }
