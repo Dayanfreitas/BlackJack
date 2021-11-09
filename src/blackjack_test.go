@@ -15,21 +15,16 @@ const (
 )
 
 func TestGiveCards(t *testing.T) {
-	// black_jack := New(OptionsBlackJack{})
-	// deck := black_jack.Deck
+	black_jack := New(OptionsBlackJack{})
 
-	// deck[0]
-	// desk[1]
+	lastCardForBlackJack := black_jack.Deck.Cards[len(black_jack.Deck.Cards)-1]
+	player := Player{}
+	_ = faker.FakeData(&player)
+	player.SetDownTable(black_jack)
 
-	// player := Player{}
-	// _ = faker.FakeData(&player)
-	// player.SetDownTable(black_jack)
+	black_jack.Dealer.GiveCards(&player)
 
-	// black_jack.Dealer.GiveCards(&player)
-
-	// assert.ElementsMatch(t,,cards, "")
-	// t.ElementsMatch([], [])
-	assert.Equal(t, 1, 2)
+	assert.Equal(t, lastCardForBlackJack, player.Hand[0])
 }
 
 func TestSetDownTable(t *testing.T) {

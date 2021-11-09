@@ -174,6 +174,8 @@ func New(optionsBlackJack OptionsBlackJack) *BlackJack {
 		MaxPlayers:  7,
 		HashPlayers: make(map[string]*Player),
 	}
+
+	black_jack.Dealer.BlackJack = &black_jack
 	return &black_jack
 }
 
@@ -317,12 +319,30 @@ func (b *BlackJack) showPlayer() {
 }
 
 func (d *Dealer) GiveCards(p *Player) {
-	// first :=  [0]
-	// fmt.Println(first)
-	// dwarfs = dwarfs[1:]
+	// for _, playerOfTable := range d.BlackJack.Players {
+	// 	card := Pop(&d.BlackJack.Deck)
 
-	// p.Hand[len(p.Hand)] =
+	// 	playerOfTable.Hand = card
+	// }
+	// fmt.Println("Cars")
+
+	card := Pop(&d.BlackJack.Deck)
+	p.Hand = append(p.Hand, card)
 }
+
+func Pop(d *deck.Deck) deck.Card {
+	fmt.Println(d.Cards)
+	last := len(d.Cards) - 1
+
+	card := d.Cards[last]
+	d.Cards = d.Cards[:last]
+
+	return card
+}
+
+// func (d *Dealer) DrawCard(deck *deck.Card)  {
+
+// }
 
 // ace convenience
 
