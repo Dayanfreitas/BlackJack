@@ -24,7 +24,7 @@ func TestGiveCards(t *testing.T) {
 
 	black_jack.Dealer.GiveCards(&player)
 
-	assert.Equal(t, lastCardForBlackJack, player.Hand[0])
+	assert.Equal(t, lastCardForBlackJack, player.Hand[0], "The last card of deck blackjack should be the first card of player")
 }
 
 func TestSetDownTable(t *testing.T) {
