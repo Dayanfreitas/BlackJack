@@ -3,12 +3,13 @@ package main
 import (
 	blackjack "Dayanfreitas/BlackJack/src"
 	"fmt"
+
 	"github.com/adamclerk/deck"
 )
 
 func main() {
 	// blackjack.New(blackjack.OptionsBlackJack{})
-	blackjack.Hello()
+	blackjack.Play()
 }
 
 func ExampleWithCards() {

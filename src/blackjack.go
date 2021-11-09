@@ -75,15 +75,7 @@ type BlackJack struct {
 	Surrender   bool
 }
 
-func Hello() {
-	// d := deck.New()
-	// d1, _ := deck.New()
-	// arr := []
-	// d := string()
-	// arr := strings.Split(d1, "\n")
-
-	// fmt.Print(d1.Cards)
-
+func Play() {
 	black_jack := New(OptionsBlackJack{})
 
 	player := Player{}
@@ -92,51 +84,32 @@ func Hello() {
 		fmt.Println(err)
 	}
 
-	player2 := Player{}
-	err = faker.FakeData(&player2)
-	if err != nil {
-		fmt.Println(err)
+	player.SetDownTable(black_jack)
+	black_jack.showPlayer()
+
+	for i := 0; i < 2; i++ {
+		for _, player := range black_jack.HashPlayers {
+			// fmt.Println("Hand")
+			black_jack.Dealer.GiveCards(player)
+			// fmt.Println(player.Hand)
+		}
+		// fmt.Println("Delaer Hand")
+		// fmt.Println(black_jack.Dealer.Player)
+		// fmt.Scan()
+		black_jack.Dealer.GiveCards(&black_jack.Dealer.Player)
+		// fmt.Println(black_jack.Dealer.Player)
 	}
 
-	player.SetDownTable(black_jack)
-	player2.SetDownTable(black_jack)
+	// SHOW HANDS
+	fmt.Println("Delaer Hand")
+	fmt.Println(black_jack.Dealer.Player.Hand[0])
+	// fmt.Println(black_jack.Dealer.Player.Hand[1])
 
-	black_jack.showPlayer()
-	player2.GiveUp()
-	black_jack.showPlayer()
+	for _, player := range black_jack.HashPlayers {
+		fmt.Println("player.Hand")
+		fmt.Println(player.Hand)
+	}
 
-	// fmt.Println(black_jack.Dealer)
-
-	// dealer := Dealer{}
-	// err = faker.FakeData(&dealer)
-	// // err := faker.FakeData(&dealer.Player)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-
-	// fmt.Println("")
-	// fmt.Println("player")
-	// fmt.Println(black_jack.Players[0])
-
-	// fmt.Println("Delaer")
-	// fmt.Println(dealer)
-
-	// black_jack := BlackJack{Deck: *d1}
-	// black_jack := New(OptionsBlackJack{})
-	// black_jack.Dealer = Dealer{}
-	// black_jack.Players = append(black_jack.Players, Player{Id: "2", Name: "Dayan"})
-
-	// fmt.Println(black_jack.Dealer.teste())
-	// fmt.Println(black_jack.Players[0].teste())
-	// fmt.Printf("%s\n", teste(&black_jack.Dealer))
-	// fmt.Printf("%s\n", teste(&black_jack.Players[0]))
-	// fmt.Println(black_jack.Dealer.odds)
-
-	// black_jack.Players[0].Hand = d1.Cards
-	// black_jack.Dealer.Hand = d2.Cards
-
-	// fmt.Printf("%d\n", black_jack.Dealer.CountPoints(&black_jack.Players[0]))
-	// fmt.Printf("%d\n", black_jack.Dealer.CountPoints(&black_jack.Dealer))
 }
 
 func (d *Dealer) PaymentOdds(bet float64) float64 {
@@ -316,6 +289,9 @@ func (b *BlackJack) showPlayer() {
 	for _, v := range b.HashPlayers {
 		fmt.Printf("[%s]-> %s\n", v.Id, v.Name)
 	}
+	fmt.Printf("___________Dealer_____________\n")
+	fmt.Printf("[%s]-> %s\n", b.Dealer.Id, b.Dealer.Name)
+
 }
 
 func (d *Dealer) GiveCards(p *Player) {
@@ -324,7 +300,7 @@ func (d *Dealer) GiveCards(p *Player) {
 }
 
 func Pop(d *deck.Deck) deck.Card {
-	fmt.Println(d.Cards)
+	// fmt.Println(d.Cards)
 	last := len(d.Cards) - 1
 
 	card := d.Cards[last]
