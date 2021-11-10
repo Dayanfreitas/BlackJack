@@ -2,7 +2,6 @@ package blackjack
 
 import (
 	"fmt"
-
 	"github.com/adamclerk/deck"
 	"github.com/bxcodec/faker"
 )
