@@ -2,6 +2,7 @@ package blackjack
 
 import (
 	"fmt"
+
 	"github.com/adamclerk/deck"
 	"github.com/bxcodec/faker"
 )
@@ -14,6 +15,7 @@ const (
 	Increments        = 1
 	Decrements        = -1
 	Neutral           = 0
+	MAX_PLAYERS       = 7
 )
 
 var TablePointCards = map[int]int{
@@ -143,7 +145,7 @@ func New(optionsBlackJack OptionsBlackJack) *BlackJack {
 		Deck:        *d,
 		Odds:        options.Odds,
 		Dealer:      Dealer{Player: dealer, odds: options.Odds},
-		MaxPlayers:  7,
+		MaxPlayers:  MAX_PLAYERS,
 		HashPlayers: make(map[string]*Player),
 	}
 

@@ -1,0 +1,432 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>src: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">Dayanfreitas/BlackJack/src/blackjack.go (75.3%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package blackjack
+
+import (
+        "fmt"
+
+        "github.com/adamclerk/deck"
+        "github.com/bxcodec/faker"
+)
+
+const (
+        OddsDefault       = float64(3.0 / 2.0)
+        DeckNumberDefault = 1
+        DealerCanHit      = 16
+        BlackJackPoints   = 21
+        Increments        = 1
+        Decrements        = -1
+        Neutral           = 0
+        MAX_PLAYERS       = 7
+)
+
+var TablePointCards = map[int]int{
+        int(deck.ACE):   0,
+        int(deck.TWO):   2,
+        int(deck.THREE): 3,
+        int(deck.FOUR):  4,
+        int(deck.FIVE):  5,
+        int(deck.SIX):   6,
+        int(deck.SEVEN): 7,
+        int(deck.EIGHT): 8,
+        int(deck.NINE):  9,
+        int(deck.TEN):   10,
+        int(deck.JACK):  10,
+        int(deck.QUEEN): 10,
+        int(deck.KING):  10,
+}
+
+type player interface {
+        HandCount() int
+}
+
+func HandCount(p player) int <span class="cov8" title="1">{
+        return p.HandCount()
+}</span>
+
+func (d *Dealer) HandCount() int <span class="cov0" title="0">{
+        return d.GetHandPoint(&amp;d.Hand)
+}</span>
+
+func (p *Player) HandCount() int <span class="cov8" title="1">{
+        return p.GetHandPoint(&amp;p.Hand)
+}</span>
+
+type Player struct {
+        Id        string      `faker:"uuid_digit"`
+        Name      string      `faker:"first_name"`
+        Hand      []deck.Card `faker:"-"`
+        CountCard int         `faker:"-"`
+        BlackJack *BlackJack  `faker:"-"`
+}
+
+type Dealer struct {
+        Player
+        odds  float64 `faker:"-"`
+        Point int     `faker:"-"`
+}
+
+type BlackJack struct {
+        DeckNumber  int
+        Odds        float64
+        Deck        deck.Deck
+        Cards       []deck.Card
+        Players     []Player
+        HashPlayers map[string]*Player
+        Dealer      Dealer
+        MaxPlayers  int
+        Surrender   bool
+}
+
+func Play() <span class="cov0" title="0">{
+        black_jack := New(OptionsBlackJack{})
+
+        player := Player{}
+        err := faker.FakeData(&amp;player)
+        if err != nil </span><span class="cov0" title="0">{
+                fmt.Println(err)
+        }</span>
+
+        <span class="cov0" title="0">player.SetDownTable(black_jack)
+        black_jack.showPlayer()
+
+        for i := 0; i &lt; 2; i++ </span><span class="cov0" title="0">{
+                for _, player := range black_jack.HashPlayers </span><span class="cov0" title="0">{
+                        // fmt.Println("Hand")
+                        black_jack.Dealer.GiveCards(player)
+                        // fmt.Println(player.Hand)
+                }</span>
+                // fmt.Println("Delaer Hand")
+                // fmt.Println(black_jack.Dealer.Player)
+                // fmt.Scan()
+                <span class="cov0" title="0">black_jack.Dealer.GiveCards(&amp;black_jack.Dealer.Player)</span>
+                // fmt.Println(black_jack.Dealer.Player)
+        }
+
+        // SHOW HANDS
+        <span class="cov0" title="0">fmt.Println("Delaer Hand")
+        fmt.Println(black_jack.Dealer.Player.Hand[0])
+        // fmt.Println(black_jack.Dealer.Player.Hand[1])
+
+        for _, player := range black_jack.HashPlayers </span><span class="cov0" title="0">{
+                fmt.Println("player.Hand")
+                fmt.Println(player.Hand)
+        }</span>
+
+}
+
+func (d *Dealer) PaymentOdds(bet float64) float64 <span class="cov8" title="1">{
+        return bet * d.odds
+}</span>
+
+type OptionsBlackJack struct {
+        Odds       float64
+        DeckNumber int
+}
+
+func New(optionsBlackJack OptionsBlackJack) *BlackJack <span class="cov8" title="1">{
+        options := OptionsBlackJack{
+                Odds:       OddsDefault,
+                DeckNumber: DeckNumberDefault,
+        }
+
+        if optionsBlackJack.DeckNumber &gt; 1 </span><span class="cov8" title="1">{
+                options.DeckNumber = optionsBlackJack.DeckNumber
+        }</span>
+
+        <span class="cov8" title="1">if optionsBlackJack.Odds != options.Odds &amp;&amp; optionsBlackJack.Odds &gt; 0 </span><span class="cov8" title="1">{
+                options.Odds = optionsBlackJack.Odds
+        }</span>
+        <span class="cov8" title="1">d, _ := deck.New()
+
+        dealer := Player{}
+        faker.FakeData(&amp;dealer)
+
+        black_jack := BlackJack{
+                DeckNumber:  options.DeckNumber,
+                Deck:        *d,
+                Odds:        options.Odds,
+                Dealer:      Dealer{Player: dealer, odds: options.Odds},
+                MaxPlayers:  MAX_PLAYERS,
+                HashPlayers: make(map[string]*Player),
+        }
+
+        black_jack.Dealer.BlackJack = &amp;black_jack
+        return &amp;black_jack</span>
+}
+
+func (d *Dealer) CanHit() bool <span class="cov8" title="1">{
+        return d.GetHandPoint(&amp;d.Hand) &lt;= DealerCanHit
+}</span>
+
+func (d *Dealer) IsBlackjack(hand *[]deck.Card) bool <span class="cov8" title="1">{
+        return d.GetHandPoint(hand) == BlackJackPoints
+}</span>
+
+func (d *Dealer) IsHandBurst(hand *[]deck.Card) bool <span class="cov8" title="1">{
+        return d.GetHandPoint(hand) &gt; BlackJackPoints
+}</span>
+
+func (d *Dealer) GetHandPoint(hand *[]deck.Card) int <span class="cov8" title="1">{
+
+        point := 0
+        for _, v := range *hand </span><span class="cov8" title="1">{
+
+                if v.Face() == 0 </span><span class="cov8" title="1">{
+                        point += 11
+                }</span>
+
+                <span class="cov8" title="1">if v.Face() &gt;= 10 </span><span class="cov8" title="1">{
+                        point += 10
+                }</span>
+        }
+
+        <span class="cov8" title="1">return point</span>
+
+}
+
+func (p *Player) GetHandPoint(hand *[]deck.Card) int <span class="cov8" title="1">{
+
+        point := 0
+        for _, v := range *hand </span><span class="cov8" title="1">{
+
+                if v.Face() == 0 </span><span class="cov8" title="1">{
+                        point += 11
+                }</span>
+
+                <span class="cov8" title="1">if v.Face() &gt;= 10 </span><span class="cov8" title="1">{
+                        point += 10
+                }</span> else<span class="cov8" title="1"> {
+                        point += v.Face()
+                }</span>
+        }
+
+        // ace convenience
+        <span class="cov8" title="1">for _, v := range *hand </span><span class="cov8" title="1">{
+                // ace
+                if point &gt; BlackJackPoints </span><span class="cov8" title="1">{
+                        if v.Face() == 0 </span><span class="cov8" title="1">{
+                                point -= 10
+                        }</span>
+                }
+        }
+
+        <span class="cov8" title="1">return point</span>
+
+}
+
+func (d *Dealer) CountPoints(p player) int <span class="cov8" title="1">{
+        return HandCount(p)
+}</span>
+
+func InBetween(value, start, end int) bool <span class="cov8" title="1">{
+
+        if (value &gt;= start) &amp;&amp; (value &lt;= end) </span><span class="cov8" title="1">{
+                return true
+        }</span>
+        <span class="cov8" title="1">return false</span>
+}
+
+func (p *Player) IncrementsDecrementsOrNeutral(c *deck.Card) int <span class="cov8" title="1">{
+        //&lt;2&gt;----&lt;6&gt; +1
+        //&lt;7&gt;----&lt;9&gt;  0
+        //&lt;10&gt;---&lt;A&gt; -1
+
+        v := c.Face()
+
+        if InBetween(v, int(deck.TWO), int(deck.SIX)) </span><span class="cov8" title="1">{
+                return Increments
+        }</span>
+
+        <span class="cov8" title="1">if InBetween(v, int(deck.TEN), int(deck.KING)) || (v == int(deck.ACE)) </span><span class="cov8" title="1">{
+                return Decrements
+        }</span>
+
+        <span class="cov8" title="1">return Neutral</span>
+}
+
+func (p *Player) CountCards(c *deck.Card) int <span class="cov8" title="1">{
+        p.CountCard += p.IncrementsDecrementsOrNeutral(c)
+        return p.CountCard
+}</span>
+
+func (d *Dealer) CanSplit(p *Player) bool <span class="cov8" title="1">{
+        card1 := int(p.Hand[0].Face())
+        card2 := int(p.Hand[1].Face())
+
+        return (len(p.Hand) == 2) &amp;&amp; (TablePointCards[card1] == TablePointCards[card2])
+}</span>
+
+func (b *BlackJack) AddPlayer(p *Player) <span class="cov8" title="1">{
+        p.BlackJack = b
+        b.HashPlayers[p.Id] = p
+        // fmt.Printf("Mesa tal %d/%d jogadores\n", len(b.HashPlayers), b.MaxPlayers)
+}</span>
+
+func (b *BlackJack) RemovePlayer(p *Player) <span class="cov8" title="1">{
+        _, exist := b.HashPlayers[p.Id]
+        if exist </span><span class="cov8" title="1">{
+                delete(b.HashPlayers, p.Id)
+        }</span>
+        <span class="cov8" title="1">_, exist = b.HashPlayers[p.Id]</span>
+
+        // fmt.Println()
+        // fmt.Printf("Player [%s] give up\n", p.Name)
+        // fmt.Printf("Mesa tal %d/%d jogadores\n", len(b.HashPlayers), b.MaxPlayers)
+}
+
+func (p *Player) SetDownTable(b *BlackJack) <span class="cov8" title="1">{
+        if len(b.HashPlayers) &gt;= b.MaxPlayers </span><span class="cov8" title="1">{
+                return
+        }</span>
+
+        <span class="cov8" title="1">b.AddPlayer(p)</span>
+}
+
+func (p *Player) GiveUp() <span class="cov8" title="1">{
+        p.BlackJack.RemovePlayer(p)
+}</span>
+
+func (b *BlackJack) showPlayer() <span class="cov0" title="0">{
+        fmt.Printf("___________Players_____________\n")
+        for _, v := range b.HashPlayers </span><span class="cov0" title="0">{
+                fmt.Printf("[%s]-&gt; %s\n", v.Id, v.Name)
+        }</span>
+        <span class="cov0" title="0">fmt.Printf("___________Dealer_____________\n")
+        fmt.Printf("[%s]-&gt; %s\n", b.Dealer.Id, b.Dealer.Name)</span>
+
+}
+
+func (d *Dealer) GiveCards(p *Player) <span class="cov8" title="1">{
+        card := Pop(&amp;d.BlackJack.Deck)
+        p.Hand = append(p.Hand, card)
+}</span>
+
+func Pop(d *deck.Deck) deck.Card <span class="cov8" title="1">{
+        // fmt.Println(d.Cards)
+        last := len(d.Cards) - 1
+
+        card := d.Cards[last]
+        d.Cards = d.Cards[:last]
+
+        return card
+}</span>
+
+// func (d *Dealer) DrawCard(deck *deck.Card)  {
+
+// }
+
+// ace convenience
+
+//REFERENCIA
+// type Person struct {
+//         firstName string
+//         lastName  string
+// }
+// func printIfPerson(object interface{}) {
+//         person, ok := object.(Person)
+//         if ok {
+//                 fmt.Printf("Hello %s!\n", person.firstName)
+//         }
+// }
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>

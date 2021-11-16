@@ -14,6 +14,14 @@ const (
 	DECREMENT  = -1
 )
 
+func TestProcessPointsInHand(t *testing.T) {
+	// Player{}
+	// fmt.Print(Player{})
+	black_jack := New(OptionsBlackJack{})
+
+	assert.Equal(t, 1, 2, "process points hand player")
+}
+
 func TestGiveCards(t *testing.T) {
 	black_jack := New(OptionsBlackJack{})
 
